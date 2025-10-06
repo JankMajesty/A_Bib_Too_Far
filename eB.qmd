@@ -1,0 +1,1411 @@
+---
+title: "A Bib too far"
+author: "Lucas McGill"
+date: today
+format:
+  html:
+    theme: darkly
+    toc: true
+    embed-resources: true
+mainfont: "Georgia"
+sansfont: "Helvetica Neue"
+monofont: "JetBrains Mono"
+---
+
+# Intro
+
+This documents my turbulent attempts to generate a BibTeX bibliography on PDF remediation using an LLM. Through a series of prompts I will demonstrate the difficulties LLMs have generating accurate bibliographies. My experience with this experiment leads me to believe that some things are still best done the old-fashioned way.
+
+# First attempt
+
+## Initial prompt
+
+generate a BibTeX .bib file for these three sources from acm digital library:
+
+https://dl.acm.org/doi/10.1145/3507661
+https://dl.acm.org/doi/10.1145/3582298.3582299
+https://dl.acm.org/doi/10.1145/3706598.3713084
+
+## Initial result
+
+My first attempt was in ChatGPT. I wanted to start pretty basic because I remember when LLMs exploded on the scene a major criticism was that students were using them to write research papers and the LLMs were fabricating facts and citations. I began with asking to generate just three BibTeX entries from acm.org URLs. It was able to get the first one mostly correct, but the second pointed to another article, while the third generated an output full of "???." This is actually surprising behavior for an LLM because I am used to it being confidently wrong. In this case, It at least gave me the grace to easily see that it couldn't generate the BibTeX entry from that URL. This first output indicated that I was about to be in for a frustrating experience.
+
+```bibtex
+@article{Pradhan2022_ToolForPDFAccessibility,
+  author        = {Pradhan, Debashish and Rajput, Tripti and Jembu Rajkumar, Aravind and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+  title         = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+  journal       = {ACM Transactions on Accessible Computing},
+  volume        = {15},
+  number        = {1},
+  year          = {2022},
+  pages         = {3:1--3:52},
+  doi           = {10.1145/3507661},
+  url           = {https://doi.org/10.1145/3507661}
+}
+
+@inproceedings{Schmitt-Koopmann2025_TagAccuracy,
+  author        = {Schmitt-Koopmann, Felix M. and Huang, Elaine M. and Hutter, Hans-Peter and Darvishy, Alireza},
+  title         = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step-by-Step PDF Remediation to Improve Tag Accuracy},
+  booktitle     = {Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems (CHI ’25)},
+  year          = {2025},
+  address       = {Yokohama, Japan},
+  pages         = {48},
+  doi           = {10.1145/3706598.3713084},
+  url           = {https://doi.org/10.1145/3706598.3713084}
+}
+
+@article{Unknown2023_ACM_Other,
+  author        = {???},
+  title         = {???},
+  journal       = {???},
+  volume        = {???},
+  number        = {???},
+  year          = {2023},
+  pages         = {???},
+  doi           = {10.1145/3582298.3582299},
+  url           = {https://doi.org/10.1145/3582298.3582299}
+}
+
+```
+
+# Second attempt
+
+## Prompt
+
+I think we are missing the full citations. ACM digital libraries has an export button on the article page that allows the user to export the BibTeX citation. Can we use that?
+
+## Result
+
+Within the same chat as the first prompt, I wanted to see if I could point the LLM to the location of the BibTeX entry on the ACM page. If I revealed where the information was located, would it be able to perform a bit of web scraping to collect the information. I think it was funny that it suggested I grab the BibTeX from ACM and paste them into the prompt input. If I can copy and paste these entries? Why would I use a middleman?
+
+This was the output text: 
+
+```text
+Totally—using ACM’s built-in Export → BibTeX is the most accurate way. I can’t open ACM 
+pages directly from here (their site blocks my browser), so I can’t click the Export 
+button myself. But if you do this:
+	1.	Open each link
+	2.	Click Export (usually near the title) → BibTeX
+	3.	Copy the three BibTeX entries and paste them here
+
+…I’ll merge/clean them (fix author name casing, unicode, consistent fields), and hand 
+you a ready-to-use .bib file immediately.
+```
+
+If you’d rather not click around right now, I can also generate provisional BibTeX from secondary sources, but ACM’s export is the gold standard for exact metadata (page/article numbers, ACM IDs, etc.).
+
+# Third attempt
+
+## Prompt
+
+Can you use this format to provide a .bib file based on this example?
+
+example:
+```bibtex
+@article{Paliwal2024,
+author = {Paliwal, Sparsh and Hoeflich, Joshua and Jordan, J Bern and Jain, Rajiv and Morariu, Vlad I and Siu, Alexa and Lazar, Jonathan},
+title = {FormA11y - A tool for remediating PDF forms for accessibility},
+year = {2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+issn = {1073-0516},
+url = {https://doi.org/10.1145/3702317},
+doi = {10.1145/3702317},
+abstract = {PDF documents are usually not born-accessible, and so document authors need to put in additional work (remediation) to make them accessible for people with disabilities. Unfortunately, this step is often overlooked and hard to execute, resulting in a large number of inaccessible PDF documents on the internet. Previously, there have been research efforts to investigate potential solutions for remediating PDF documents for accessibility. However, most of the existing research focuses on accessibility of long or scientific PDF documents meant for passive reading. PDF documents come in different types, and this research project focuses on a distinct type of PDF document—forms—where the user is required to interact with the PDF document and enter data. Through our research work we identified that the PDF form remediation process is non-intuitive, repetitive, and overwhelming due to the high-information density of PDF forms, and existing research and tools do not yet address the challenges. Our research work culminated in the creation of a tool – FormA11y – that addresses these challenges by making the repetitive and painstaking process of form remediation easier. To evaluate the effectiveness and efficiency of FormA11y against the industry standard tool – Adobe Acrobat – for PDF form remediation, we performed a within-subject user study with 20 participants. With FormA11y, users remediated forms 2.8 times faster while creating more accurately accessible PDF forms.},
+note = {Just Accepted},
+journal = {ACM Trans. Comput.-Hum. Interact.},
+month = nov,
+keywords = {PDF accessibility, PDF U/A, accessibility, inclusive design, born-accessible, document accessibility, blind users}
+}
+
+```
+## Result
+
+I thought that if I gave ChatGPT an example of what I was looking for, it would provide a better output. It was better than the first, but still missed important information such as all the author names in one case.
+
+```bibtex
+@article{Pradhan2022,
+  author = {Pradhan, Debashish and Rajput, Tripti and Jembu Rajkumar, Aravind and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+  title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+  year = {2022},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {1938-7228},
+  journal = {ACM Transactions on Accessible Computing},
+  volume = {15},
+  number = {1},
+  pages = {3:1--3:52},
+  url = {https://doi.org/10.1145/3507661},
+  doi = {10.1145/3507661},
+  abstract = {In this article, the authors present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables. Twenty participants attempted accessibility remediation tasks using both Ally and Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference and much higher satisfaction with Ally.},
+  keywords = {PDF accessibility, content remediation, assistive technology, user study}
+}
+
+@article{Wang2023_PaperToHTML,
+  author = {Wang, Lucy Lu},
+  title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific PDFs into Accessible HTML},
+  year = {2023},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {2573-5279},
+  journal = {SIGACCESS Accessibility and Computing},
+  volume = {134},
+  number = {1},
+  pages = {1--1},
+  url = {https://doi.org/10.1145/3582298.3582299},
+  doi = {10.1145/3582298.3582299},
+  abstract = {Most scientific papers are distributed in PDF format, which by default is inaccessible to blind and low vision audiences and people who use assistive reading technology. This work presents Paper to HTML, a web application where users can upload and convert page-locked scientific paper PDFs to HTML documents on demand, inferring headings and reading order to make the output more accessible. Participants found the tool helpful even when not perfectly faithful, and considered the tradeoff reasonable.},
+  keywords = {PDF → HTML conversion, accessibility, assistive reading, scientific documents}
+}
+
+@inproceedings{SchmittKoopmann2025,
+  author = {Schmitt-Koopmann, Felix M. and Huang, Elaine M. and Hutter, Hans-Peter and Darvishy, Alireza},
+  title = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step-by-Step PDF Remediation to Improve Tag Accuracy},
+  year = {2025},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  booktitle = {Proceedings of the CHI Conference on Human Factors in Computing Systems (CHI ’25)},
+  month = {April},
+  keywords = {PDF accessibility, tag accuracy, remediation, visual impairments},
+  url = {https://doi.org/10.1145/3706598.3713084},
+  doi = {10.1145/3706598.3713084},
+  abstract = {PDF inaccessibility is an ongoing challenge that hinders individuals with visual impairments from reading and navigating PDFs using screen readers. This paper presents a step-by-step process for both novice and experienced users to create accessible PDF documents, including an approach for creating alternative text for mathematical formulas without expert knowledge. In a study involving nineteen participants, we evaluated our prototype PAVE 2.0 by comparing it against Adobe Acrobat Pro. Experienced users improved their tagging scores from ~42.0% to ~80.1%, and novice users from ~39.2% to ~75.2%. All participants would recommend it for novice users; many expressed preference for PAVE 2.0 in the future.},
+  pages = {48},
+  issn = {2573-5073}
+}
+```
+After generating the BibTeX entries, ChatGPT asked if I wanted it to generate a .bib file for me. 
+
+Output text:
+
+```text
+If you want, I can also generate a .bib file (as a downloadable text blob) with 
+these entries so you can directly include it in your bibliography.
+```
+# Fourth attempt
+
+## Prompt
+
+yes
+
+## Result
+
+```bibtex
+@article{Pradhan2022,
+  author = {Pradhan, Debashish and Rajput, Tripti and Jembu Rajkumar, Aravind and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+  title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+  year = {2022},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {1938-7228},
+  journal = {ACM Transactions on Accessible Computing},
+  volume = {15},
+  number = {1},
+  pages = {3:1--3:52},
+  url = {https://doi.org/10.1145/3507661},
+  doi = {10.1145/3507661},
+  abstract = {In this article, the authors present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables. Twenty participants attempted accessibility remediation tasks using both Ally and Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference and much higher satisfaction with Ally.},
+  keywords = {PDF accessibility, content remediation, assistive technology, user study}
+}
+
+@article{Wang2023_PaperToHTML,
+  author = {Wang, Lucy Lu},
+  title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific PDFs into Accessible HTML},
+  year = {2023},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {2573-5279},
+  journal = {SIGACCESS Accessibility and Computing},
+  volume = {134},
+  number = {1},
+  pages = {1--1},
+  url = {https://doi.org/10.1145/3582298.3582299},
+  doi = {10.1145/3582298.3582299},
+  abstract = {Most scientific papers are distributed in PDF format, which by default is inaccessible to blind and low vision audiences and people who use assistive reading technology. This work presents Paper to HTML, a web application where users can upload and convert page-locked scientific paper PDFs to HTML documents on demand, inferring headings and reading order to make the output more accessible. Participants found the tool helpful even when not perfectly faithful, and considered the tradeoff reasonable.},
+  keywords = {PDF → HTML conversion, accessibility, assistive reading, scientific documents}
+}
+
+@inproceedings{SchmittKoopmann2025,
+  author = {Schmitt‑Koopmann, Felix M. and Huang, Elaine M. and Hutter, Hans‑Peter and Darvishy, Alireza},
+  title = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step‑by‑Step PDF Remediation to Improve Tag Accuracy},
+  year = {2025},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  booktitle = {Proceedings of the CHI Conference on Human Factors in Computing Systems (CHI ’25)},
+  month = {April},
+  keywords = {PDF accessibility, tag accuracy, remediation, visual impairments},
+  url = {https://doi.org/10.1145/3706598.3713084},
+  doi = {10.1145/3706598.3713084},
+  abstract = {PDF inaccessibility is an ongoing challenge that hinders individuals with visual impairments from reading and navigating PDFs using screen readers. This paper presents a step‑by‑step process for both novice and experienced users to create accessible PDF documents, including an approach for creating alternative text for mathematical formulas without expert knowledge. In a study involving nineteen participants, we evaluated our prototype PAVE 2.0 by comparing it against Adobe Acrobat Pro. Experienced users improved their tagging scores from ~42.0% to ~80.1%, and novice users from ~39.2% to ~75.2%. All participants would recommend it for novice users; many expressed preference for PAVE 2.0 in the future.},
+  pages = {48},
+  issn = {2573-5073}
+}
+```
+
+# Fifth attempt
+
+### Prompt
+
+almost there, but we are missing "numpages =" and "month ="
+
+### Result
+
+```text
+✅ I’ve updated the BibTeX entries to include numpages and month.
+```
+```bibtex
+@article{Pradhan2022,
+  author = {Pradhan, Debashish and Rajput, Tripti and Jembu Rajkumar, Aravind and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+  title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+  year = {2022},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {1938-7228},
+  journal = {ACM Transactions on Accessible Computing},
+  volume = {15},
+  number = {1},
+  pages = {3:1--3:52},
+  numpages = {52},
+  month = feb,
+  url = {https://doi.org/10.1145/3507661},
+  doi = {10.1145/3507661},
+  abstract = {In this article, the authors present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables. Twenty participants attempted accessibility remediation tasks using both Ally and Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference and much higher satisfaction with Ally.},
+  keywords = {PDF accessibility, content remediation, assistive technology, user study}
+}
+
+@article{Wang2023_PaperToHTML,
+  author = {Wang, Lucy Lu},
+  title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific PDFs into Accessible HTML},
+  year = {2023},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {2573-5279},
+  journal = {SIGACCESS Accessibility and Computing},
+  volume = {134},
+  number = {1},
+  pages = {1--1},
+  numpages = {1},
+  month = jun,
+  url = {https://doi.org/10.1145/3582298.3582299},
+  doi = {10.1145/3582298.3582299},
+  abstract = {Most scientific papers are distributed in PDF format, which by default is inaccessible to blind and low vision audiences and people who use assistive reading technology. This work presents Paper to HTML, a web application where users can upload and convert page-locked scientific paper PDFs to HTML documents on demand, inferring headings and reading order to make the output more accessible. Participants found the tool helpful even when not perfectly faithful, and considered the tradeoff reasonable.},
+  keywords = {PDF → HTML conversion, accessibility, assistive reading, scientific documents}
+}
+
+@inproceedings{SchmittKoopmann2025,
+  author = {Schmitt‑Koopmann, Felix M. and Huang, Elaine M. and Hutter, Hans‑Peter and Darvishy, Alireza},
+  title = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step‑by‑Step PDF Remediation to Improve Tag Accuracy},
+  year = {2025},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  booktitle = {Proceedings of the CHI Conference on Human Factors in Computing Systems (CHI ’25)},
+  month = apr,
+  pages = {48},
+  numpages = {14},
+  keywords = {PDF accessibility, tag accuracy, remediation, visual impairments},
+  url = {https://doi.org/10.1145/3706598.3713084},
+  doi = {10.1145/3706598.3713084},
+  abstract = {PDF inaccessibility is an ongoing challenge that hinders individuals with visual impairments from reading and navigating PDFs using screen readers. This paper presents a step‑by‑step process for both novice and experienced users to create accessible PDF documents, including an approach for creating alternative text for mathematical formulas without expert knowledge. In a study involving nineteen participants, we evaluated our prototype PAVE 2.0 by comparing it against Adobe Acrobat Pro. Experienced users improved their tagging scores from ~42.0% to ~80.1%, and novice users from ~39.2% to ~75.2%. All participants would recommend it for novice users; many expressed preference for PAVE 2.0 in the future.},
+  issn = {2573-5073}
+}
+
+```
+
+# Sixth attempt
+
+### Prompt
+
+ok there are still some issues. the order is incorrect. also I want to use the doi for the @article instead of author name. We are missing "articleno = " the "month =" for. each of the articles is incorrect. "pages = " is not a field we are looking for. Here are what the BibTeX entries from ACM look like:
+
+```bibtex
+@article{10.1145/3507661,
+author = {Pradhan, Debashish and Rajput, Tripti and Rajkumar, Aravind Jembu and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+year = {2022},
+issue_date = {March 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {1},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3507661},
+doi = {10.1145/3507661},
+abstract = {Most PDF documents are inaccessible for people with disabilities, creating barriers in education, science, commerce, e-government, and recreation. Documents in PDF format are considered harder to make accessible than documents in other formats, primarily due to the insufficient tools available to assist content creators. In this article, we present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from other areas of HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables in a PDF document for improved accessibility. Twenty participants attempted to complete the same PDF accessibility remediation tasks using both Ally and a standard industry tool, Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference for and a much higher level of satisfaction with Ally. The approaches taken in Ally improve the ability to create accessible PDFs efficiently and accurately for the four important aspects studied, but future work will need to incorporate additional functionality, related to remediating alt text, forms, and other aspects of PDF accessibility.},
+journal = {ACM Trans. Access. Comput.},
+month = mar,
+articleno = {3},
+numpages = {52},
+keywords = {matterhorn protocol, PDF universal access, content accessibility, PDF accessibility, Portable Document Format (PDF)}
+}
+
+@article{10.1145/3582298.3582299,
+author = {Wang, Lucy Lu and Bragg, Jonathan and Weld, Daniel S.},
+title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific Pdfs into Accessible HTML},
+year = {2023},
+issue_date = {October 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+number = {134},
+issn = {1558-2337},
+url = {https://doi.org/10.1145/3582298.3582299},
+doi = {10.1145/3582298.3582299},
+abstract = {Most scientific papers are distributed in PDF format, which is by default inaccessible to blind and low vision audiences and people who use assistive reading technology. These access barriers hinder and may even deter members of these groups from pursuing careers or opportunities that necessitate the reading of technical documents. In cases where no accessible versions of papers are made available by publishers or authors, the gold standard for PDF document accessibility is PDF remediation. Remediation is the process by which a PDF is made accessible by fixing accessibility errors, for example, tagging headings, specifying reading order, adding alt text to images, and so on, such that a reader can navigate and engage with the resulting content using assistive reading technology such as screen readers.},
+journal = {SIGACCESS Access. Comput.},
+month = jan,
+articleno = {1},
+numpages = {1}
+}
+
+@inproceedings{10.1145/3706598.3713084,
+author = {Schmitt-Koopmann, Felix Maximilian and Huang, Elaine May and Hutter, Hans-Peter and Darvishy, Alireza},
+title = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step-by-Step PDF Remediation to Improve Tag Accuracy},
+year = {2025},
+isbn = {9798400713941},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3706598.3713084},
+doi = {10.1145/3706598.3713084},
+abstract = {PDF inaccessibility is an ongoing challenge that hinders individuals with visual impairments from reading and navigating PDFs using screen readers. This paper presents a step-by-step process for both novice and experienced users to create accessible PDF documents, including an approach for creating alternative text for mathematical formulas without expert knowledge. In a study involving nineteen participants, we evaluated our prototype PAVE 2.0 by comparing it against Adobe Acrobat Pro, the existing standard for remediating PDFs. Our study shows that experienced users improved their tagging scores from 42.0\% to 80.1\%, and novice users from 39.2\% to 75.2\% with PAVE 2.0. Overall, fifteen participants stated that they would prefer to use PAVE 2.0 in the future, and all participants would recommend it for novice users. Our work demonstrates PAVE 2.0’s potential for increasing PDF accessibility for people with visual impairments and highlights remaining challenges.},
+booktitle = {Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems},
+articleno = {48},
+numpages = {16},
+keywords = {Accessibility, PDF, Tagged PDF, PDF/UA, AI, User Study, Screen Readers},
+location = {
+},
+series = {CHI '25}
+}
+```
+
+### Result
+
+I thought this one was pretty good, but it was only the three entries I was testing with.
+
+Output:
+
+```text
+done! I rebuilt the .bib with:
+
+entries ordered to match your DOI list,
+
+citation keys set to the DOIs,
+
+articleno, numpages, and correct month values,
+
+no pages field.
+
+Grab it here:
+📂 acm_fixed_order_doi_keys.bib
+
+If you want me to normalize long abstracts (or remove them), tweak abbreviations 
+(e.g., journal short forms), or switch month to numeric (e.g., month = 3), say the word 
+and I’ll regenerate.
+
+```
+File output:
+
+```bibtex
+@article{10.1145/3507661,
+author = {Pradhan, Debashish and Rajput, Tripti and Rajkumar, Aravind Jembu and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+year = {2022},
+issue_date = {March 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {1},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3507661},
+doi = {10.1145/3507661},
+abstract = {Most PDF documents are inaccessible for people with disabilities, creating barriers in education, science, commerce, e-government, and recreation. Documents in PDF format are considered harder to make accessible than documents in other formats, primarily due to the insufficient tools available to assist content creators. In this article, we present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from other areas of HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables in a PDF document for improved accessibility. Twenty participants attempted to complete the same PDF accessibility remediation tasks using both Ally and a standard industry tool, Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference for and a much higher level of satisfaction with Ally. The approaches taken in Ally improve the ability to create accessible PDFs efficiently and accurately for the four important aspects studied, but future work will need to incorporate additional functionality, related to remediating alt text, forms, and other aspects of PDF accessibility.},
+journal = {ACM Trans. Access. Comput.},
+month = mar,
+articleno = {3},
+numpages = {52},
+keywords = {matterhorn protocol, PDF universal access, content accessibility, PDF accessibility, Portable Document Format (PDF)}
+}
+
+@article{10.1145/3582298.3582299,
+author = {Wang, Lucy Lu and Bragg, Jonathan and Weld, Daniel S.},
+title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific Pdfs into Accessible HTML},
+year = {2023},
+issue_date = {October 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+number = {134},
+issn = {1558-2337},
+url = {https://doi.org/10.1145/3582298.3582299},
+doi = {10.1145/3582298.3582299},
+abstract = {Most scientific papers are distributed in PDF format, which is by default inaccessible to blind and low vision audiences and people who use assistive reading technology. These access barriers hinder and may even deter members of these groups from pursuing careers or opportunities that necessitate the reading of technical documents. In cases where no accessible versions of papers are made available by publishers or authors, the gold standard for PDF document accessibility is PDF remediation. Remediation is the process by which a PDF is made accessible by fixing accessibility errors, for example, tagging headings, specifying reading order, adding alt text to images, and so on, such that a reader can navigate and engage with the resulting content using assistive reading technology such as screen readers.},
+journal = {SIGACCESS Access. Comput.},
+month = jan,
+articleno = {1},
+numpages = {1}
+}
+
+@inproceedings{10.1145/3706598.3713084,
+author = {Schmitt-Koopmann, Felix Maximilian and Huang, Elaine May and Hutter, Hans-Peter and Darvishy, Alireza},
+title = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step-by-Step PDF Remediation to Improve Tag Accuracy},
+year = {2025},
+isbn = {9798400713941},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3706598.3713084},
+doi = {10.1145/3706598.3713084},
+abstract = {PDF inaccessibility is an ongoing challenge that hinders individuals with visual impairments from reading and navigating PDFs using screen readers. This paper presents a step-by-step process for both novice and experienced users to create accessible PDF documents, including an approach for creating alternative text for mathematical formulas without expert knowledge. In a study involving nineteen participants, we evaluated our prototype PAVE 2.0 by comparing it against Adobe Acrobat Pro, the existing standard for remediating PDFs. Our study shows that experienced users improved their tagging scores from 42.0\% to 80.1\%, and novice users from 39.2\% to 75.2\% with PAVE 2.0. Overall, fifteen participants stated that they would prefer to use PAVE 2.0 in the future, and all participants would recommend it for novice users. Our work demonstrates PAVE 2.0’s potential for increasing PDF accessibility for people with visual impairments and highlights remaining challenges.},
+booktitle = {Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems},
+articleno = {48},
+numpages = {16},
+keywords = {Accessibility, PDF, Tagged PDF, PDF/UA, AI, User Study, Screen Readers},
+location = {
+},
+series = {CHI '25}
+}
+```
+# Seventh attempt
+
+### Prompt
+
+Alright. This is perfect. I will send some more links for BibTeX generation:
+
+https://dl.acm.org/doi/10.1145/3706598.3713084
+https://dl.acm.org/doi/10.1145/3517428.3550407
+https://dl.acm.org/doi/10.1145/3582298.3582299
+https://dl.acm.org/doi/10.1145/3648188.3678215
+https://dl.acm.org/doi/10.1145/3507661
+https://dl.acm.org/doi/10.1145/2851581.2892588
+https://dl.acm.org/doi/10.1145/3663548.3675634
+
+
+### Result
+
+As the file name indicates, the .bib file provided had placeholders. This was not the result I wanted to achieve. Why would I use an LLM for information I could readily grab that a human had already prepared for me to use? I also noticed that it was having a tough time with accuracy such as getting all of the author names that wrote an article, or sometimes only including one of many and the abstracts were often made up or not generated at all, or assigning titles to the wrong doi or author. The "Kumar and others" output was rather funny to me because the "others" is just one other author, Lucy Lu Wang. Also ChatGPT made up Kumar's first name.
+
+Output:
+
+```text
+Got it — I generated a unified .bib covering all 7 DOIs, keyed by DOI and matching the 
+ACM export field order you showed (with articleno, numpages, month, no pages). For the f
+our entries where ACM blocked my fetch just now, I left __TBD__ placeholders for 
+articleno/numpages (and used reasonable months based on the venue). The three you 
+already validated are fully filled.
+
+Download it here:
+📂 acm_batch_partial_with_placeholders.bib
+
+If you paste the ACM Export → BibTeX for those four items, I’ll drop in the exact 
+articleno/numpages (and any other fields like isbn/issn), keep the DOI keys and order, 
+and hand back a pristine file.
+```
+File output:
+
+```bibtex
+% NOTE: For four entries (ASSETS '22, HT '24, CHI EA '16, ASSETS '24), ACM's site blocked my fetch.
+% I filled in what I could confirm (DOI, URL, year/publisher/series) and left placeholders to keep your pipeline unblocked.
+% Replace placeholders with ACM's Export → BibTeX when convenient.
+
+@inproceedings{10.1145/3517428.3550407,
+author = {Schmitt-Koopmann, Felix Maximilian and Darvishy, Alireza},
+title = {Accessible PDFs: Applying Artificial Intelligence for Automated Remediation of STEM PDFs},
+year = {2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3517428.3550407},
+doi = {10.1145/3517428.3550407},
+booktitle = {Proceedings of the 24th International ACM SIGACCESS Conference on Computers and Accessibility},
+series = {ASSETS '22},
+month = oct,
+articleno = {__TBD__},
+numpages = {__TBD__},
+abstract = {The goal of this Ph.D. is to apply artificial intelligence for document analysis to reasonably automate the remediation process of PDFs.},
+keywords = {PDF, accessibility, remediation, AI}
+}
+
+@inproceedings{10.1145/3648188.3678215,
+author = {Anderson, Mark W. R.},
+title = {Towards Better Tools for Remediation of Born-Digital Documents},
+year = {2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3648188.3678215},
+doi = {10.1145/3648188.3678215},
+booktitle = {Proceedings of the 35th ACM Conference on Hypertext and Social Media},
+series = {HT '24},
+month = sep,
+articleno = {__TBD__},
+numpages = {__TBD__}
+}
+
+@inproceedings{10.1145/2851581.2892588,
+author = {Bigham, Jeffrey P.},
+title = {An Uninteresting Tour Through Why Our Research Papers Are in PDF},
+year = {2016},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2851581.2892588},
+doi = {10.1145/2851581.2892588},
+booktitle = {Proceedings of the 2016 CHI Conference Extended Abstracts on Human Factors in Computing Systems},
+series = {CHI EA '16},
+month = may,
+articleno = {__TBD__},
+numpages = {__TBD__}
+}
+
+@inproceedings{10.1145/3663548.3675634,
+author = {Kumar, Anirudh and others},
+title = {Uncovering the New Accessibility Crisis in Scholarly PDFs},
+year = {2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3663548.3675634},
+doi = {10.1145/3663548.3675634},
+booktitle = {Proceedings of the 26th International ACM SIGACCESS Conference on Computers and Accessibility},
+series = {ASSETS '24},
+month = oct,
+articleno = {__TBD__},
+numpages = {__TBD__}
+}
+
+```
+# Disclaimer
+
+Before we continue, I want to address that the output of the last seven attempts did not give me confidence that I could brute force an accurate .bib file from ChatGPT by just going off vibes. I began doing research on what BibTeX is, how an LLM might generate an accurate .bib, and how I was going to validate the .bib once it was generated. My research was conducted through Google and DuckDuckGo searches, as well as with Gemini, ChatGPT, and Claude. I actually don't mind using an LLM as a search engine to conduct research as long as it gives me the sources so that I can verify the information. I'm not going to post the prompts I used for that research here, because it was just research and not attempts. After conducting some research that didn't provide me with any surefire methods. I decided that maybe I needed a more specific tool rather than the default ChatGPT. I thought I would ask Gemini about training my own bot on BibTeX to see how difficult that might be. The next few prompts are my exchange with Gemini, including output from Gemini for a highly specific prompt to generate a .bib that I ultimately edited and used for this assignment.
+
+# Eigth attempt
+
+### Prompt
+
+can i create a chatbot that is trained on bibtex format to generate a .bib file from a list of dois? 
+
+### Result
+
+Gemini gave me a rather long output, but I will post the first few sentences that indicated to me that my approach was unnecessary.
+
+Output:
+
+```text
+Yes, you absolutely can create a tool that generates a .bib file from a list of DOIs, 
+and a chatbot can be a great user interface for it.
+
+However, you don't need to "train" a model on the BibTeX format from scratch. BibTeX has 
+a well-defined, rule-based structure. The task is more about data retrieval and 
+formatting rather than complex language understanding.
+
+```
+
+# Ninth attempt
+
+### Prompt
+
+I have tried this with chatgpt and claude, but got imperfect results. I am trying to generate a .bib on a specific topic for an assignment in my prompt engineering class. 
+
+### Result
+
+I didn't ask for this, but Gemini generated a prompt template to use with ChatGPT. I remember Dr. Lankes once mentioning that a prompt technique some people use is to ask one LLM to generate a prompt for another. 
+
+Output:
+
+::: {.callout-note title="Gemini Markdown Output"}
+
+  ```markdown
+  ## ROLE
+You are an expert academic research assistant and a specialist in LaTeX and BibTeX formatting. You are meticulous, accurate, and follow instructions precisely.
+
+## GOAL
+Your task is to generate a high-quality, error-free BibTeX (.bib) file on a specific academic topic. The file should contain 10-12 relevant and significant publications.
+
+## TOPIC & CONSTRAINTS
+1.  **Topic:** "[Enter your specific topic here. Be as detailed as possible. e.g., 'The application of Graph Neural Networks for drug discovery and repositioning']"
+2.  **Date Range:** Publications must be from [e.g., '2020 to the present'].
+3.  **Publication Type:** Focus on [e.g., 'peer-reviewed journal articles and major conference proceedings (like NeurIPS, ICLR, AAAI)']. Avoid pre-prints from arXiv unless they are highly cited.
+
+## STEP-BY-STEP PROCESS
+Follow this sequence exactly. Do not deviate.
+
+1.  **Search & Identify:** First, identify a list of 10-12 highly relevant academic papers that fit the Topic and Constraints.
+2.  **Verify & Retrieve DOI:** For each paper you identify, find its official Digital Object Identifier (DOI). This is mandatory. If you cannot find a DOI, discard the paper and find another.
+3.  **Fetch Metadata:** Using each verified DOI, retrieve the official citation metadata. Pay close attention to author names, publication year, full title, journal or conference name, volume, issue/number, and page range.
+4.  **Format BibTeX Entry:** For each paper, format the retrieved metadata into a perfect BibTeX entry. Adhere to the following Formatting Rules.
+
+## FORMATTING RULES
+- **Citation Key:** Generate a clean, consistent citation key for each entry using the format: `FirstAuthorLastNameYearAKeyword`. For example: `Goodfellow2020GANs`.
+- **Author Formatting:** Format author lists correctly, with names separated by 'and'. For example: `author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}`.
+- **Title Case:** Preserve the original title case of the paper. Do not convert titles to all lowercase. Enclose the title in double curly braces `{{...}}` to protect its case from being altered by LaTeX styles.
+- **Required Fields:** Every `@article` entry must include `author`, `title`, `journal`, `year`, `volume`, `number`, `pages`, and `doi`. Every `@inproceedings` entry must include `author`, `title`, `booktitle`, `year`, and `doi`.
+- **Syntax:** Ensure every field ends with a comma, except for the last one in an entry. Ensure all strings are enclosed in `{...}` or `"..."`.
+- **Final Validation:** Before presenting the output, perform a final syntax check on the entire file to ensure there are no missing commas, mismatched brackets, or other formatting errors.
+
+## OUTPUT
+Present the final output as a single, complete BibTeX code block. Do not include any explanations, apologies, or conversational text before or after the code block.
+  
+  ```
+:::
+
+# Tenth attempt
+
+### Prompt
+
+Prompt in Markdown format from Gemini:
+
+::: {.callout-note title="Gemini generated prompt"}
+
+  ```markdown
+  ## ROLE
+You are an expert academic research assistant and a specialist in LaTeX and BibTeX formatting. You are meticulous, accurate, and follow instructions precisely.
+## GOAL
+Your task is to generate a high-quality, error-free BibTeX (.bib) file on a specific academic topic. The file should contain 20-30 relevant and significant publications.
+## TOPIC & CONSTRAINTS
+1.  Topic: PDF remediation for accessibility
+2.  Date Range: Publications must be from 2016 to present.
+3.  Publication Type: Focus on peer-reviewed journal articles and major conference proceedings sources like ACM Digital Library. Avoid pre-prints from arXiv unless they are highly cited.
+## STEP-BY-STEP PROCESS
+Follow this sequence exactly. Do not deviate.
+1.  Search & Identify: First, identify a list of 20-30 highly relevant academic papers that fit the Topic and Constraints.
+2.  Verify & Retrieve DOI: For each paper you identify, find its official Digital Object Identifier (DOI). This is mandatory. If you cannot find a DOI, discard the paper and find another.
+3.  Fetch Metadata: Using each verified DOI, retrieve the official citation metadata. Pay close attention to author names, publication year, full title, journal or conference name, volume, issue/number, and page range.
+4.  Format BibTeX Entry: For each paper, format the retrieved metadata into a perfect BibTeX entry. Adhere to the following Formatting Rules.
+## FORMATTING RULES
+- Citation Key: Generate a clean, consistent citation key for each entry using the format: FirstAuthorLastNameYearAKeyword. For example: Goodfellow2020GANs.
+- Author Formatting: Format author lists correctly, with names separated by 'and'. For example: author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}.
+- Title Case: Preserve the original title case of the paper. Do not convert titles to all lowercase. Enclose the title in double curly braces {{...}} to protect its case from being altered by LaTeX styles.
+- Required Fields: Every @article entry must include author, title, journal, year, volume, number, pages, and doi. Every @inproceedings entry must include author, title, booktitle, year, and doi.
+- Syntax: Ensure every field ends with a comma, except for the last one in an entry. Ensure all strings are enclosed in {...} or "...".
+- Final Validation: Before presenting the output, perform a final syntax check on the entire file to ensure there are no missing commas, mismatched brackets, or other formatting errors.
+## OUTPUT
+Present the final output as a single, complete BibTeX code block. Do not include any explanations, apologies, or conversational text before or after the code block.
+  ```
+:::
+
+### Result
+
+This one I did not validate because I could tell the output was not formatted for BibTeX by the double braces around the title (I later realized this error was embedded in my prompt), and the way it was differentiating between entries by adding part of the title. It would sometimes use parts of a title from another entry that didn't fit with the entry it was generating. I think DOIs are more useful for this reason. Also, a lot of the entries were sparse. Using only the required fields. 
+
+```bibtex
+@inproceedings{Mittelbach2024DocEngTaggedPDF,
+  author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+  title = {{Automatically Producing Accessible and Reusable PDFs with {\LaTeX}}},
+  booktitle = {Proceedings of the 2024 ACM Symposium on Document Engineering (DocEng '24)},
+  year = {2024},
+  doi = {10.1145/3685650.3685670}
+}
+
+@inproceedings{Kumar2024ScholarlyCrisis,
+  author = {Kumar, Anukriti and Wang, Lucy Lu},
+  title = {{Uncovering the New Accessibility Crisis in Scholarly PDFs}},
+  booktitle = {Proceedings of the 26th International ACM SIGACCESS Conference on Computers and Accessibility (ASSETS '24)},
+  year = {2024},
+  doi = {10.1145/3663548.3675634}
+}
+
+@inproceedings{Mittelbach2025WellTaggedPDF,
+  author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+  title = {{Well-Tagged PDF and Universal Accessibility with {\LaTeX}}},
+  booktitle = {Proceedings of the 2025 ACM Symposium on Document Engineering (DocEng '25)},
+  year = {2025},
+  doi = {10.1145/3704268.3749107}
+}
+```
+
+
+# Eleventh attempt
+
+### Prompt
+
+I went back to my previous Gemini chat that generated the prompt to see how to adjust the prompt to use DOI instead of FirstAuthorLastNameYearAKeyword for the citation key. This was the prompt:
+
+### Result
+
+::: {.callout-note title="Gemini generated prompt"}
+
+  ```markdown
+  ## ROLE
+You are an expert academic research assistant and a specialist in LaTeX and BibTeX formatting. You are meticulous, accurate, and follow instructions precisely.
+
+## GOAL
+Your task is to generate a high-quality, error-free BibTeX (.bib) file on a specific academic topic. The file should contain 10-12 relevant and significant publications.
+
+## TOPIC & CONSTRAINTS
+1.  **Topic:** "[Enter your specific topic here. Be as detailed as possible. e.g., 'The application of Graph Neural Networks for drug discovery and repositioning']"
+2.  **Date Range:** Publications must be from [e.g., '2020 to the present'].
+3.  **Publication Type:** Focus on [e.g., 'peer-reviewed journal articles and major conference proceedings (like NeurIPS, ICLR, AAAI)']. Avoid pre-prints from arXiv unless they are highly cited.
+
+## STEP-BY-STEP PROCESS
+Follow this sequence exactly. Do not deviate.
+
+1.  **Search & Identify:** First, identify a list of 10-12 highly relevant academic papers that fit the Topic and Constraints.
+2.  **Verify & Retrieve DOI:** For each paper you identify, find its official Digital Object Identifier (DOI). This is mandatory. If you cannot find a DOI, discard the paper and find another.
+3.  **Fetch Metadata:** Using each verified DOI, retrieve the official citation metadata. Pay close attention to author names, publication year, full title, journal or conference name, volume, issue/number, and page range.
+4.  **Format BibTeX Entry:** For each paper, format the retrieved metadata into a perfect BibTeX entry. Adhere to the following Formatting Rules.
+
+## FORMATTING RULES
+- **Citation Key:** Use the article's full **DOI** as the citation key for each entry. For example: `@article{10.1126/science.1172133, ...}`.
+- **Author Formatting:** Format author lists correctly, with names separated by 'and'. For example: `author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}`.
+- **Title Case:** Preserve the original title case of the paper. Do not convert titles to all lowercase. Enclose the title in double curly braces `{{...}}` to protect its case from being altered by LaTeX styles.
+- **Required Fields:** Every `@article` entry must include `author`, `title`, `journal`, `year`, `volume`, `number`, `pages`, and `doi`. Every `@inproceedings` entry must include `author`, `title`, `booktitle`, `year`, and `doi`.
+- **Syntax:** Ensure every field ends with a comma, except for the last one in an entry. Ensure all strings are enclosed in `{...}` or `"..."`.
+- **Final Validation:** Before presenting the output, perform a final syntax check on the entire file to ensure there are no missing commas, mismatched brackets, or other formatting errors.
+
+## OUTPUT
+Present the final output as a single, complete BibTeX code block. Do not include any explanations, apologies, or conversational text before or after the code block.
+  ```
+:::
+
+ 
+
+# Twelth attempt
+
+### Prompt
+
+::: {.callout-note title="Prompt in Markdown format"}
+
+  ```markdown
+## ROLE
+You are an expert academic research assistant and a specialist in LaTeX and BibTeX formatting. You are meticulous, accurate, and follow instructions precisely.
+
+## GOAL
+Your task is to generate a high-quality, error-free BibTeX (.bib) file on a specific academic topic. The file should contain 25-30 relevant and significant publications.
+
+## TOPIC & CONSTRAINTS
+1.  **Topic:** PDF remediation for accessibility
+2.  **Date Range:** Publications must be from 2016 to present.
+3.  **Publication Type:** Focus on peer-reviewed journal articles and major conference proceedings sources like ACM Digital Library. Avoid pre-prints from arXiv unless they are highly cited.
+
+## STEP-BY-STEP PROCESS
+Follow this sequence exactly. Do not deviate.
+
+1.  **Search & Identify:** First, identify a list of 25-30 highly relevant academic papers that fit the Topic and Constraints.
+2.  **Verify & Retrieve DOI:** For each paper you identify, find its official Digital Object Identifier (DOI). This is mandatory. If you cannot find a DOI, discard the paper and find another.
+3.  **Fetch Metadata:** Using each verified DOI, retrieve the official citation metadata. Pay close attention to author names, publication year, full title, journal or conference name, volume, issue/number, and page range.
+4.  **Format BibTeX Entry:** For each paper, format the retrieved metadata into a perfect BibTeX entry. Adhere to the following Formatting Rules.
+
+## FORMATTING RULES
+- **Citation Key:** Use the article's full **DOI** as the citation key for each entry. For example: `@article{10.1126/science.1172133, ...}`.
+- **Author Formatting:** Format author lists correctly, with names separated by 'and'. For example: `author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}`.
+- **Title Case:** Preserve the original title case of the paper. Do not convert titles to all lowercase. 
+- **Required Fields:** Every `@article` entry must include `author`, `title`, `journal`, `year`, `volume`, `number`, `pages`, and `doi`. Search hard for and include `publisher`, `address `, `issn`, `url`, `eprint`, `abstract`, `month`, `articleno`, `numpages`, `issue_date` and `keywords` if available.  Every `@inproceedings` entry must include `author`, `title`, `booktitle`, `year`, and `doi`. Search hard for and include `publisher`, `address `, `isbn`, `url`, `eprint`, `abstract`, `articleno`, `numpages`, `issue_date`, `address `, `series `, and `keywords` if available.  Use doi for `@article`and `@inproceedings`instead of author.
+- **Syntax:** Ensure every field ends with a comma, except for the last one in an entry. Ensure all strings are enclosed in `{...}` or `"..."`.
+- **Final Validation:** Before presenting the output, perform a final syntax check on the entire file to ensure there are no missing commas, mismatched brackets, or other formatting errors.
+
+Example `@article` BibTeX entries:
+
+@article{10.1145/3582298.3582299,
+author = {Wang, Lucy Lu and Bragg, Jonathan and Weld, Daniel S.},
+title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific Pdfs into Accessible HTML},
+year = {2023},
+issue_date = {October 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+number = {134},
+issn = {1558-2337},
+url = {https://doi.org/10.1145/3582298.3582299},
+doi = {10.1145/3582298.3582299},
+abstract = {Most scientific papers are distributed in PDF format, which is by default inaccessible to blind and low vision audiences and people who use assistive reading technology. These access barriers hinder and may even deter members of these groups from pursuing careers or opportunities that necessitate the reading of technical documents. In cases where no accessible versions of papers are made available by publishers or authors, the gold standard for PDF document accessibility is PDF remediation. Remediation is the process by which a PDF is made accessible by fixing accessibility errors, for example, tagging headings, specifying reading order, adding alt text to images, and so on, such that a reader can navigate and engage with the resulting content using assistive reading technology such as screen readers.},
+journal = {SIGACCESS Access. Comput.},
+month = jan,
+articleno = {1},
+numpages = {1}
+}
+
+@article{10.1145/3507661,
+author = {Pradhan, Debashish and Rajput, Tripti and Rajkumar, Aravind Jembu and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+year = {2022},
+issue_date = {March 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {1},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3507661},
+doi = {10.1145/3507661},
+abstract = {Most PDF documents are inaccessible for people with disabilities, creating barriers in education, science, commerce, e-government, and recreation. Documents in PDF format are considered harder to make accessible than documents in other formats, primarily due to the insufficient tools available to assist content creators. In this article, we present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from other areas of HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables in a PDF document for improved accessibility. Twenty participants attempted to complete the same PDF accessibility remediation tasks using both Ally and a standard industry tool, Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference for and a much higher level of satisfaction with Ally. The approaches taken in Ally improve the ability to create accessible PDFs efficiently and accurately for the four important aspects studied, but future work will need to incorporate additional functionality, related to remediating alt text, forms, and other aspects of PDF accessibility.},
+journal = {ACM Trans. Access. Comput.},
+month = mar,
+articleno = {3},
+numpages = {52},
+keywords = {matterhorn protocol, PDF universal access, content accessibility, PDF accessibility, Portable Document Format (PDF)}
+}
+
+@article{10.1145/3546195,
+author = {Menzies, Rachel and Tigwell, Garreth W. and Crabb, Michael},
+title = {Author Reflections on Creating Accessible Academic Papers},
+year = {2022},
+issue_date = {December 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {4},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3546195},
+doi = {10.1145/3546195},
+abstract = {Academic papers demonstrate inaccessibility despite accessible writing resources made available by SIGACCESS and others. The move from accessibility guidance to accessibility implementation is challenging for authors. Our work focuses on understanding what challenges authors of academic papers face in creating content elements (e.g., tables, charts, images) to better understand how to improve accessibility. We classified 3,866 content elements from 330 papers covering a 10-year sample of academic work from ASSETS to understand the variety used. We also reflected on the design choices that make the content elements inaccessible. We then conducted interviews with 13 academic authors from PhD student through to Professor Emeritus that publish within top-tier accessibility and HCI venues to understand the challenges faced in creating accessible content. We found critical issues in how academics understand and implement accessibility while also balancing the visual design of the paper. We provide recommendations for improving accessibility in the academic paper-writing process and focus on steps that can be taken by authors, publishers, researchers, and universities.},
+journal = {ACM Trans. Access. Comput.},
+month = oct,
+articleno = {33},
+numpages = {36},
+keywords = {Accessibility, content elements, charts, tables, images}
+}
+
+Example `@inproceedings` entries
+
+@inproceedings{10.1145/3685650.3685670,
+author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+title = {Automatically producing accessible and reusable PDFs with LATEX},
+year = {2024},
+isbn = {9798400711695},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3685650.3685670},
+doi = {10.1145/3685650.3685670},
+abstract = {In this application note we outline the goals of the "LATEX Tagged PDF" project, describe its current status, show how it can already now been used to create accessible and reusable PDFs, and outline our future plans for a successful completion. Further information can be found at https://latex3.github.io/tagging-project/.},
+booktitle = {Proceedings of the ACM Symposium on Document Engineering 2024},
+articleno = {15},
+numpages = {4},
+keywords = {Accessibility, KaTeX, PDF/UA, Reuse, Tagging, Typesetting systems, Well Tagged PDF},
+location = {San Jose, CA, USA},
+series = {DocEng '24}
+}
+
+@inproceedings{10.1145/3517428.3550407,
+author = {Schmitt-Koopmann, Felix M. and Huang, Elaine M. and Darvishy, Alireza},
+title = {Accessible PDFs: Applying Artificial Intelligence for Automated Remediation of STEM PDFs},
+year = {2022},
+isbn = {9781450392587},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3517428.3550407},
+doi = {10.1145/3517428.3550407},
+abstract = {People with visual impairments use assistive technology, e.g., screen readers, to navigate and read PDFs. However, such screen readers need extra information about the logical structure of the PDF, such as the reading order, header levels, and mathematical formulas, described in readable form to navigate the document in a meaningful way. This logical structure can be added to a PDF with tags. Creating tags for a PDF is time-consuming, and requires awareness and expert knowledge. Hence, most PDFs are left untagged, and as a result, they are poorly readable or unreadable for people who rely on screen readers. STEM documents are particularly problematic with their complex document structure and complicated mathematical formulae. These inaccessible PDFs present a major barrier for people with visual impairments wishing to pursue studies or careers in STEM fields, who cannot easily read studies and publications from their field. The goal of this Ph.D. is to apply artificial intelligence for document analysis to reasonably automate the remediation process of PDFs and present a solution for large mathematical formulae accessibility in PDFs. With these new methods, the Ph.D. research aims to lower barriers to creating accessible scientific PDFs, by reducing the time, effort, and expertise necessary to do so, ultimately facilitating greater access to scientific documents for people with visual impairments.},
+booktitle = {Proceedings of the 24th International ACM SIGACCESS Conference on Computers and Accessibility},
+articleno = {90},
+numpages = {6},
+keywords = {Accessibility, Document Analysis, Formula Recognition, Math Viewer, PDF Accessibility, PDF/UA, Page Object Detection, Reading Order, Tagged PDF},
+location = {Athens, Greece},
+series = {ASSETS '22}
+}
+
+@inproceedings{10.1145/3704268.3748669,
+author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+title = {MathML and other XML Technologies for Accessible PDF from LATEX},
+year = {2025},
+isbn = {9798400713514},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3704268.3748669},
+doi = {10.1145/3704268.3748669},
+abstract = {In this paper we describe the current approach to using MathML within Tagged PDF to enhance the accessibility of mathematical (STEM) documents. While MathML is specified by the PDF 2.0 specification as a standard namespace for PDF Structure Elements, the interaction of MathML, which is defined as an XME vocabulary, and PDF Structure Elements (which are not defined as XME) is left unspecified by the PDF standard. This has necessitated the development of formalizations to interpret and validate PDF Structure Trees as XME, which are also introduced in this paper.},
+booktitle = {Proceedings of the 2025 ACM Symposium on Document Engineering},
+articleno = {19},
+numpages = {4},
+keywords = {Accessibility, LaTeX, Mathematics, PDF/UA, Well Tagged PDF, XML},
+location = {Nottingham, United Kingdom},
+series = {DocEng '25}
+}
+
+You can use the examples in the BibTeX generation.
+
+## OUTPUT
+Present the final output as a single, complete BibTeX code block. Do not include any explanations, apologies, or conversational text before or after the code block.
+  ```
+:::
+
+### Result
+
+I tweaked the prompt in a few ways on this one. Obviously I updated the prompt so it would provide DOI instead of FirstAuthorLastNameYearAKeyword for the citation key. I also added more fields that I thought should be required for the BibTeX entries and removed the instructions to wrap titles in double braces. I also thought that by adding examples to the prompt it would help the LLM understand better what I was looking for. This looked pretty promising at first, but eventually I realized that some of the entries were citing the author as "Author, A. and Author, B." Obviously, this was incorrect.
+
+```bibtex
+@inproceedings{10.1145/3685650.3685662,
+author = {Author, A. and Author, B.},
+title = {Document Capture and Its Implications for PDF Accessibility},
+year = {2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3685650.3685662},
+doi = {10.1145/3685650.3685662},
+abstract = {Examines smartphone document capture workflows and downstream effects on accessibility and remediation requirements in PDFs.},
+booktitle = {Proceedings of the ACM Symposium on Document Engineering 2024},
+articleno = {??},
+numpages = {??},
+keywords = {document capture, OCR, PDF accessibility},
+series = {DocEng '24}
+}
+
+@inproceedings{10.1145/3517428.3550408,
+author = {Author, A. and Author, B.},
+title = {Improving Reading Order Detection for PDF Remediation},
+year = {2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3517428.3550408},
+doi = {10.1145/3517428.3550408},
+abstract = {Presents methods to infer and correct reading order in PDFs to support more efficient remediation workflows.},
+booktitle = {Proceedings of the 24th International ACM SIGACCESS Conference on Computers and Accessibility},
+articleno = {??},
+numpages = {??},
+keywords = {reading order, PDF tagging, remediation},
+series = {ASSETS '22}
+}
+
+@inproceedings{10.1145/3517428.3550410,
+author = {Author, A. and Author, B.},
+title = {Assisting Alt Text Authoring in Scientific PDFs},
+year = {2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3517428.3550410},
+doi = {10.1145/3517428.3550410},
+abstract = {Tool-supported workflows for generating and validating alternative text for figures in scholarly PDFs as part of remediation.},
+booktitle = {Proceedings of the 24th International ACM SIGACCESS Conference on Computers and Accessibility},
+articleno = {??},
+numpages = {??},
+keywords = {alt text, figures, remediation, scholarly PDFs},
+series = {ASSETS '22}
+}
+```
+
+# Thirteenth attempt
+
+### Prompt
+
+::: {.callout-note title="Prompt in Markdown format"}
+
+  ```markdown
+## ROLE
+You are an expert academic research assistant and a specialist in LaTeX and BibTeX formatting. You are meticulous, accurate, and follow instructions precisely.
+
+## GOAL
+Your task is to generate a high-quality, error-free BibTeX (.bib) file on a specific academic topic. The file should contain 25-30 relevant and significant publications.
+
+## TOPIC & CONSTRAINTS
+1.  **Topic:** PDF remediation for accessibility
+2.  **Date Range:** Publications must be from 2016 to present.
+3.  **Publication Type:** Focus on peer-reviewed journal articles and major conference proceedings sources like ACM Digital Library. Avoid pre-prints from arXiv unless they are highly cited.
+
+## STEP-BY-STEP PROCESS
+Follow this sequence exactly. Do not deviate.
+
+1.  **Search & Identify:** First, identify a list of 25-30 highly relevant academic papers that fit the Topic and Constraints.
+2.  **Verify & Retrieve DOI:** For each paper you identify, find its official Digital Object Identifier (DOI). This is mandatory. If you cannot find a DOI, discard the paper and find another.
+3.  **Fetch Metadata:** Using each verified DOI, retrieve the official citation metadata. Pay close attention to author names, publication year, full title, journal or conference name, volume, issue/number, and page range.
+4.  **Format BibTeX Entry:** For each paper, format the retrieved metadata into a perfect BibTeX entry. Adhere to the following Formatting Rules.
+
+## FORMATTING RULES
+- **Citation Key:** Use the article's full **DOI** as the citation key for each entry. For example: `@article{10.1126/science.1172133, ...}`.
+- **Author Formatting:** Format author lists correctly, with names separated by 'and'. For example: `author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}`.
+- **Title Case:** Preserve the original title case of the paper. Do not convert titles to all lowercase. 
+- **Required Fields:** Every `@article` entry must include `author`, `title`, `journal`, `year`, `volume`, `number`, `pages`, and `doi`. Search hard for and include `publisher`, `address `, `issn`, `url`, `eprint`, `abstract`, `month`, `articleno`, `numpages`, `issue_date` and `keywords` if available.  Every `@inproceedings` entry must include `author`, `title`, `booktitle`, `year`, and `doi`. Search hard for and include `publisher`, `address `, `isbn`, `url`, `eprint`, `abstract`, `articleno`, `numpages`, `issue_date`, `address `, `series `, and `keywords` if available.  Use doi for `@article`and `@inproceedings`instead of author.
+- **Syntax:** Ensure every field ends with a comma, except for the last one in an entry. Ensure all strings are enclosed in `{...}` or `"..."`.
+- **Final Validation:** Before presenting the output, perform a final syntax check on the entire file to ensure there are no missing commas, mismatched brackets, or other formatting errors.
+
+Example `@article` BibTeX entries:
+```
+```bibtex
+@article{10.1145/3582298.3582299,
+author = {Wang, Lucy Lu and Bragg, Jonathan and Weld, Daniel S.},
+title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific Pdfs into Accessible HTML},
+year = {2023},
+issue_date = {October 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+number = {134},
+issn = {1558-2337},
+url = {https://doi.org/10.1145/3582298.3582299},
+doi = {10.1145/3582298.3582299},
+abstract = {Most scientific papers are distributed in PDF format, which is by default inaccessible to blind and low vision audiences and people who use assistive reading technology. These access barriers hinder and may even deter members of these groups from pursuing careers or opportunities that necessitate the reading of technical documents. In cases where no accessible versions of papers are made available by publishers or authors, the gold standard for PDF document accessibility is PDF remediation. Remediation is the process by which a PDF is made accessible by fixing accessibility errors, for example, tagging headings, specifying reading order, adding alt text to images, and so on, such that a reader can navigate and engage with the resulting content using assistive reading technology such as screen readers.},
+journal = {SIGACCESS Access. Comput.},
+month = jan,
+articleno = {1},
+numpages = {1}
+}
+
+@article{10.1145/3507661,
+author = {Pradhan, Debashish and Rajput, Tripti and Rajkumar, Aravind Jembu and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+year = {2022},
+issue_date = {March 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {1},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3507661},
+doi = {10.1145/3507661},
+abstract = {Most PDF documents are inaccessible for people with disabilities, creating barriers in education, science, commerce, e-government, and recreation. Documents in PDF format are considered harder to make accessible than documents in other formats, primarily due to the insufficient tools available to assist content creators. In this article, we present the research and development of Ally, a new tool to assist content creators in remediating their PDF files to improve accessibility. Ally utilizes best practices from other areas of HCI research to create a more efficient and effective interaction for remediating regions, headers, reading order, and tables in a PDF document for improved accessibility. Twenty participants attempted to complete the same PDF accessibility remediation tasks using both Ally and a standard industry tool, Adobe Acrobat Pro. Ally was almost twice as fast and three times as accurate compared to Acrobat Pro, with participants reporting a strong preference for and a much higher level of satisfaction with Ally. The approaches taken in Ally improve the ability to create accessible PDFs efficiently and accurately for the four important aspects studied, but future work will need to incorporate additional functionality, related to remediating alt text, forms, and other aspects of PDF accessibility.},
+journal = {ACM Trans. Access. Comput.},
+month = mar,
+articleno = {3},
+numpages = {52},
+keywords = {matterhorn protocol, PDF universal access, content accessibility, PDF accessibility, Portable Document Format (PDF)}
+}
+
+@article{10.1145/3546195,
+author = {Menzies, Rachel and Tigwell, Garreth W. and Crabb, Michael},
+title = {Author Reflections on Creating Accessible Academic Papers},
+year = {2022},
+issue_date = {December 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {4},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3546195},
+doi = {10.1145/3546195},
+abstract = {Academic papers demonstrate inaccessibility despite accessible writing resources made available by SIGACCESS and others. The move from accessibility guidance to accessibility implementation is challenging for authors. Our work focuses on understanding what challenges authors of academic papers face in creating content elements (e.g., tables, charts, images) to better understand how to improve accessibility. We classified 3,866 content elements from 330 papers covering a 10-year sample of academic work from ASSETS to understand the variety used. We also reflected on the design choices that make the content elements inaccessible. We then conducted interviews with 13 academic authors from PhD student through to Professor Emeritus that publish within top-tier accessibility and HCI venues to understand the challenges faced in creating accessible content. We found critical issues in how academics understand and implement accessibility while also balancing the visual design of the paper. We provide recommendations for improving accessibility in the academic paper-writing process and focus on steps that can be taken by authors, publishers, researchers, and universities.},
+journal = {ACM Trans. Access. Comput.},
+month = oct,
+articleno = {33},
+numpages = {36},
+keywords = {Accessibility, content elements, charts, tables, images}
+}
+
+Example `@inproceedings` entries
+
+@inproceedings{10.1145/3685650.3685670,
+author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+title = {Automatically producing accessible and reusable PDFs with LATEX},
+year = {2024},
+isbn = {9798400711695},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3685650.3685670},
+doi = {10.1145/3685650.3685670},
+abstract = {In this application note we outline the goals of the "LATEX Tagged PDF" project, describe its current status, show how it can already now been used to create accessible and reusable PDFs, and outline our future plans for a successful completion. Further information can be found at https://latex3.github.io/tagging-project/.},
+booktitle = {Proceedings of the ACM Symposium on Document Engineering 2024},
+articleno = {15},
+numpages = {4},
+keywords = {Accessibility, KaTeX, PDF/UA, Reuse, Tagging, Typesetting systems, Well Tagged PDF},
+location = {San Jose, CA, USA},
+series = {DocEng '24}
+}
+
+@inproceedings{10.1145/3517428.3550407,
+author = {Schmitt-Koopmann, Felix M. and Huang, Elaine M. and Darvishy, Alireza},
+title = {Accessible PDFs: Applying Artificial Intelligence for Automated Remediation of STEM PDFs},
+year = {2022},
+isbn = {9781450392587},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3517428.3550407},
+doi = {10.1145/3517428.3550407},
+abstract = {People with visual impairments use assistive technology, e.g., screen readers, to navigate and read PDFs. However, such screen readers need extra information about the logical structure of the PDF, such as the reading order, header levels, and mathematical formulas, described in readable form to navigate the document in a meaningful way. This logical structure can be added to a PDF with tags. Creating tags for a PDF is time-consuming, and requires awareness and expert knowledge. Hence, most PDFs are left untagged, and as a result, they are poorly readable or unreadable for people who rely on screen readers. STEM documents are particularly problematic with their complex document structure and complicated mathematical formulae. These inaccessible PDFs present a major barrier for people with visual impairments wishing to pursue studies or careers in STEM fields, who cannot easily read studies and publications from their field. The goal of this Ph.D. is to apply artificial intelligence for document analysis to reasonably automate the remediation process of PDFs and present a solution for large mathematical formulae accessibility in PDFs. With these new methods, the Ph.D. research aims to lower barriers to creating accessible scientific PDFs, by reducing the time, effort, and expertise necessary to do so, ultimately facilitating greater access to scientific documents for people with visual impairments.},
+booktitle = {Proceedings of the 24th International ACM SIGACCESS Conference on Computers and Accessibility},
+articleno = {90},
+numpages = {6},
+keywords = {Accessibility, Document Analysis, Formula Recognition, Math Viewer, PDF Accessibility, PDF/UA, Page Object Detection, Reading Order, Tagged PDF},
+location = {Athens, Greece},
+series = {ASSETS '22}
+}
+
+@inproceedings{10.1145/3704268.3748669,
+author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+title = {MathML and other XML Technologies for Accessible PDF from LATEX},
+year = {2025},
+isbn = {9798400713514},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3704268.3748669},
+doi = {10.1145/3704268.3748669},
+abstract = {In this paper we describe the current approach to using MathML within Tagged PDF to enhance the accessibility of mathematical (STEM) documents. While MathML is specified by the PDF 2.0 specification as a standard namespace for PDF Structure Elements, the interaction of MathML, which is defined as an XME vocabulary, and PDF Structure Elements (which are not defined as XME) is left unspecified by the PDF standard. This has necessitated the development of formalizations to interpret and validate PDF Structure Trees as XME, which are also introduced in this paper.},
+booktitle = {Proceedings of the 2025 ACM Symposium on Document Engineering},
+articleno = {19},
+numpages = {4},
+keywords = {Accessibility, LaTeX, Mathematics, PDF/UA, Well Tagged PDF, XML},
+location = {Nottingham, United Kingdom},
+series = {DocEng '25}
+}
+```
+
+```markdown
+You can use the examples in the BibTeX generation.
+
+## OUTPUT
+Present the final output as a single, complete BibTeX code block. Do not include any explanations, apologies, or conversational text before or after the code block.
+  ```
+:::
+
+### Result
+
+I thought I would try the previous prompt again in a new chat, because I thought it was pretty comprehensive. The output actually gave me hope that I might be able to correct the LLM in such a way that it would eventually give me one clean .bib output. I had way less hallucinations than previous attempts and most of the errors had more to do with formatting issues or errors with low risk fields that are not required by BibTeX anyway.
+
+```bibtex
+@article{10.1002/leap.1581,
+author = {Darvishy, Alireza and Sethe, Rolf and Engler, Ines and Pierrès, Oriane and Manning, Juliet},
+title = {The State of Scientific PDF Accessibility in Repositories: A Survey in Switzerland},
+year = {2023},
+publisher = {Wiley},
+journal = {Learned Publishing},
+issn = {0953-1513},
+url = {https://doi.org/10.1002/leap.1581},
+doi = {10.1002/leap.1581},
+abstract = {A survey of repository-held scientific PDFs in Switzerland evaluates tagging, headings, and other accessibility features and proposes recommendations to improve PDF accessibility.},
+month = sep,
+keywords = {PDF accessibility, repositories, Learned Publishing, tagging, headings}
+}
+
+@incollection{10.1007/978-3-319-41264-1_48,
+author = {Wild, Gian and Craddock, Daniel},
+title = {Are PDFs an Accessible Solution?},
+year = {2016},
+publisher = {Springer},
+address = {Cham},
+booktitle = {Computers Helping People with Special Needs. ICCHP 2016 Proceedings},
+series = {Lecture Notes in Computer Science},
+url = {https://doi.org/10.1007/978-3-319-41264-1_48},
+doi = {10.1007/978-3-319-41264-1_48},
+abstract = {Discusses the suitability of PDF as an accessible format, with implications for remediation and standards compliance.},
+keywords = {PDF/UA, accessibility, remediation, standards}
+}
+
+@article{10.1007/s10209-019-00660-3,
+author = {Ribera, Mireia and Pozzobon, Ricardo and Sayago, Sergio},
+title = {Publishing Accessible Proceedings: The DSAI 2016 Case Study},
+year = {2019},
+publisher = {Springer},
+address = {Berlin, Heidelberg},
+journal = {Universal Access in the Information Society},
+issn = {1615-5297},
+url = {https://doi.org/10.1007/s10209-019-00660-3},
+doi = {10.1007/s10209-019-00660-3},
+abstract = {A case study on producing accessible conference proceedings, focusing on workflows and PDF remediation challenges and practices.},
+keywords = {proceedings, PDF accessibility, remediation workflow, publishing}
+}
+
+```
+
+# Fourteenth attempt
+
+### Prompt
+
+This is a pretty good job. I noticed a handful of errors in your output when i validated it against .bib records I found on line. I will paste them here. Please look at the sections for each entry and update accordingly. I have identified the entries by doi.
+
+here are my notes: 
+For doi 10.1145/3663548.3675634 check articleno, numpages
+
+For doi 10.1145/3685650.3685670 check title and remove the {\LaTeX} formatting. Instead use "LaTeX". 
+
+For doi 10.1145/3704268.3748669 check title and remove the {\LaTeX} formatting. Instead use "LaTeX".
+
+For 10.1145/3704268.3749107 check title and remove the {\LaTeX} formatting. Instead use "LaTeX". Also, title should end after "LaTeX". Check articleno and numpages.
+
+For doi 10.1145/3706598.3713084 check title, articleno, numpages, series
+
+For doi 10.1145/3702317 check authors issue_date, month
+
+For doi 10.1002/leap.1581 check capitalization in title, volume, number, eprint, pages
+
+doi 10.1007/978-3-031-62846-7_5 should be an @inproceedings
+
+For doi 10.1007/978-3-319-94277-3_20 check authors, pages, isbn,
+
+For doi 10.1145/3663548.3675634 no need for "-aux" after the doi following @inproceedings. check title.
+
+For doi 10.1007/s10209-025-01194-7 check title capitalization, month
+
+For doi 10.1145/3685650.3685670 no need for "-supp" after the doi follwing the @inproceedings
+
+For doi 10.1145/3517428.3550407 no need for "-implications" after @inproceedings. check title
+
+For doi 10.1145/3702317 no need for "-forms" after @inproceedings. check title, issue_date, volume, number, month, articleno, numpages
+
+For doi 10.1007/978-3-319-41264-1_50 it is an @inproceedings, not @incollection. After you adjust that there will be no need for "-extended" after @inproceedings. For this one check author, title
+
+### Result
+
+For this prompt I decided to manually validate all the entries against the exported BibTeX entries from the locations I could find the papers online. I used the side by side view in Cursor to check these. I noticed that ChatGPT was still making up abstracts in some instances, but at this point I decided to ignore this and just focus on the fields that I thought would be easier to correct. I also noticed a formatting issue that it would always wrap the word "LaTeX" like this: {\LaTeX}. I'm sure that this is how it might be written in some coding languages, but I could not find any evidence that it needed to be that way in BibTeX. So I asked ChatGPT to remove those when I found them. There were also instances where ChatGPT was adding words like "-aux", "-supp", "-implications", "-forms", and "-extended" after the doi in the citation key. I asked it to remove those as well. ChatGPT did a good job of fixing these issues. However, it did not provide an output of all the entries in a single code block, which was my fault as I did not specify that as a requirement.
+
+```bibtex
+@inproceedings{10.1145/3704268.3748669,
+author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+title = {MathML and Other XML Technologies for Accessible PDF from LaTeX},
+year = {2025},
+isbn = {979-8-4007-1351-4},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3704268.3748669},
+doi = {10.1145/3704268.3748669},
+abstract = {This paper describes the current approach to using MathML within Tagged PDF to enhance the accessibility of mathematical (STEM) documents and outlines formalizations to interpret and validate PDF Structure Trees.},
+booktitle = {Proceedings of the 2025 ACM Symposium on Document Engineering},
+articleno = {19},
+numpages = {4},
+location = {Nottingham, United Kingdom},
+series = {DocEng '25}
+}
+
+@article{10.1145/3702317,
+author = {Paliwal, Sparsh and Hoeflich, Joshua and Jordan, J. Bern and Jain, Rajiv and Morariu, Vlad I. and Siu, Alexa and Lazar, Jonathan},
+title = {FormA11y: Research and Development of a Tool for Remediating PDF Forms for Accessibility},
+year = {2025},
+issue_date = {February 2025},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {32},
+number = {1},
+issn = {1073-0516},
+url = {https://doi.org/10.1145/3702317},
+doi = {10.1145/3702317},
+journal = {ACM Trans. Comput.-Hum. Interact.},
+month = feb,
+articleno = {5},
+numpages = {39}
+}
+
+@inproceedings{10.1007/978-3-319-94277-3_20,
+author = {Darvishy, Alireza},
+title = {PDF Accessibility: Tools and Challenges},
+year = {2018},
+isbn = {978-3-319-94276-6},
+publisher = {Springer},
+address = {Cham},
+url = {https://doi.org/10.1007/978-3-319-94277-3_20},
+doi = {10.1007/978-3-319-94277-3_20},
+booktitle = {Computers Helping People with Special Needs: ICCHP 2018},
+series = {Lecture Notes in Computer Science},
+pages = {113--116},
+location = {Linz, Austria}
+}
+
+```
+
+# Fifteenth attempt
+
+### Prompt
+
+Great job. I am sending you a few edits. Please adjust according to my edits. These are my notes: 
+
+10.1145/3704268.3749107 articleno and numpages still incorrect. articleno should be 4 numpages should be 1
+
+10.1145/3706598.3713084 title still incorrect. Full title is "Towards More Accessible Scientific PDFs for People with Visual Impairments: Step-by-Step PDF Remediation to Improve Tag Accuracy". Series should be CHI '25
+
+We are missing doi 10.1145/3663548.3675634. Please add this back in
+
+We are missing doi 10.1007/s10209-025-01194-7. Please add this back in.
+
+We are missing 10.1145/3685650.3685670. Please add this back in.
+
+### Result
+
+At this point I was getting a bit frustrated with the output. I decided that I would tell ChatGPT exactly what the errors were instead of my previous prompt where I just told them to check specific fields that I knew had errors. Previously I was hoping that indicating where the errors were, ChatGPT would resolve them correctly. And this did work pretty well, but two of the BibTeX entries were still having issues. Also, I was missing a few entries that I wanted ChatGPT to add back in.
+
+```bibtex
+@inproceedings{10.1145/3704268.3749107,
+author = {Mittelbach, Frank and Fischer, Ulrike and Carlisle, David and Wright, Joseph},
+title = {Well-Tagged PDF and Universal Accessibility with LaTeX},
+year = {2025},
+isbn = {979-8-4007-1351-4},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3704268.3749107},
+doi = {10.1145/3704268.3749107},
+booktitle = {Proceedings of the 2025 ACM Symposium on Document Engineering},
+articleno = {4},
+numpages = {1},
+location = {Nottingham, United Kingdom},
+series = {DocEng '25}
+}
+
+@inproceedings{10.1145/3706598.3713084,
+author = {Schmitt-Koopmann, Felix M. and Huang, Elaine M. and Hutter, Hans-Peter and Darvishy, Alireza},
+title = {Towards More Accessible Scientific PDFs for People with Visual Impairments: Step-by-Step PDF Remediation to Improve Tag Accuracy},
+year = {2025},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3706598.3713084},
+doi = {10.1145/3706598.3713084},
+booktitle = {Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems},
+location = {Yokohama, Japan},
+series = {CHI '25}
+}
+
+@inproceedings{10.1145/3663548.3675634,
+author = {Kumar, Anukriti and Wang, Lucy Lu},
+title = {Uncovering the New Accessibility Crisis in Scholarly PDFs: Publishing Model and Platform Changes Contribute to Declining Scholarly Document Accessibility in the Last Decade},
+year = {2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3663548.3675634},
+doi = {10.1145/3663548.3675634},
+booktitle = {Proceedings of the 26th International ACM SIGACCESS Conference on Computers and Accessibility},
+articleno = {36},
+numpages = {16},
+location = {St. John's, NL, Canada},
+series = {ASSETS '24}
+}
+
+```
+
+# Sixteenth attempt
+
+### Prompt
+
+This is great. No need for further edits. Now can you provide the entire .bib from the correct entries in the original output to the edits in the next output and the entries in the final output?
+
+### Result
+
+This is basically when I had decided to give up trying to get ChatGPT to output one accurate, unified .bib. ChatGPT only displayed 15 of the original 25 entries. The 15 entries did appear to be legitimate entries however. At this point I was working for the machine more than the machine was working for me. I did not know how to recover from the drift, and I was running out of time to start the process over again and complete this document.
+
+
+```bibtex
+@article{10.1145/3507661,
+author = {Pradhan, Debashish and Rajput, Tripti and Rajkumar, Aravind Jembu and Lazar, Jonathan and Jain, Rajiv and Morariu, Vlad I. and Manjunatha, Varun},
+title = {Development and Evaluation of a Tool for Assisting Content Creators in Making PDF Files More Accessible},
+year = {2022},
+issue_date = {March 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+journal = {ACM Trans. Access. Comput.},
+volume = {15},
+number = {1},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3507661},
+doi = {10.1145/3507661},
+month = mar,
+articleno = {3},
+numpages = {52},
+keywords = {PDF accessibility, remediation tools, reading order, headings, tables}
+}
+
+@article{10.1145/3546195,
+author = {Menzies, Rachel and Tigwell, Garreth W. and Crabb, Michael},
+title = {Author Reflections on Creating Accessible Academic Papers},
+year = {2022},
+issue_date = {December 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+journal = {ACM Trans. Access. Comput.},
+volume = {15},
+number = {4},
+issn = {1936-7228},
+url = {https://doi.org/10.1145/3546195},
+doi = {10.1145/3546195},
+month = oct,
+articleno = {33},
+numpages = {36}
+}
+
+@article{10.1145/3582298.3582299,
+author = {Wang, Lucy Lu and Bragg, Jonathan and Weld, Daniel S.},
+title = {Paper to HTML: A Publicly Available Web Tool for Converting Scientific PDFs into Accessible HTML},
+year = {2023},
+issue_date = {October 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+journal = {SIGACCESS Access. Comput.},
+number = {134},
+issn = {1558-2337},
+url = {https://doi.org/10.1145/3582298.3582299},
+doi = {10.1145/3582298.3582299},
+month = jan,
+articleno = {1},
+numpages = {1}
+}
+
+```
+
+# Conclusion
+
+I knew this assignment would be frustrating when I was first reading the instructions. One of the first major criticisms of LLMs was that they generate bogus citations. They seem to have gotten a bit better at this in a short time but have a long ways to go in my opinion. I studied writing & rhetoric in undergrad, so I don't have much trouble conducting research and finding relevant sources. This was my key frustration with this assignment. Had the assignment been to just go and find 20 sources on PDF remediation and compile them into a .bib, I could have done that in under an hour. And the folks at ACM have made this easy for us. A simple click on the export button on any article I found on ACM provides you with a perfect BibTeX entry, but this isn't BibTeX class, this is Prompt Engineering. 
+
+I think there is so much more I need to learn about interfacing with the machine to make it work effectively for me. However, with this in mind, I began to wonder about its use case. If I must spend years learning how to effectively prompt for something like a .bib, is this technology really maximizing human productivity? In my research for this assignment, I began watching YouTube videos made by so-called "Prompt Engineers." I realized that there is no unifying opinion on how one best interfaces with the machine. And it seems like it is hard to come to some concrete conclusions because we don't know precisely how these things work. 
+
+Now don't get me wrong, I think this tool can be used effectively in specific areas such as brainstorming and certain research, but I am not convinced that this is the technology to usher in the age of *WALL-E*. Which if you are unfamiliar, *WALL-E* is a film where humans have destroyed the planet and are now living obese lives on a space station where everything is automated for them. I spent hours validating the results of my output. This was infuriating in the context of this assignment. However, if I knew I was in some way directly contributing to making LLMs more accurate, I would have found it to be more worthwhile, and maybe with this knowledge I may be able to make that kind of contribution in the future. I can't wait to find out what I was doing wrong from the other students in the class who seem more knowledgeable than me on the topic. Maybe my assertions are all wrong. Anyway, I'm not upset about this. I joined this class because there is so much hype around this technology and I wanted to be able to talk and think critically about it. I personally am not convinced that it is a major threat, nor a panacea for all our problems. I think it is a tool, but you wouldn't use a hammer to tighten a screw. A tool has certain specific use cases, and it is important to know the limitations and the possibilities.
+
+FYI: I constructed eB.bib by synthesizing the outputs from my final two ChatGPT chats.
