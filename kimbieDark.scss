@@ -1,0 +1,25 @@
+/*-- scss:defaults --*/
+
+// 1. Import the fonts from Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Georgia&display=swap');
+// Note: Helvetica Neue is a web-safe font, so we don't need to import it.
+
+// 2. Define font variables
+$font-family-serif: "Georgia", serif;
+$font-family-sans-serif: "Helvetica Neue", sans-serif;
+$font-family-monospace: "JetBrains Mono", monospace;
+
+// 3. Set the main body font
+// To use Georgia as the main font:
+$font-family-base: $font-family-serif;
+
+// To use Helvetica Neue as the main font:
+// $font-family-base: $font-family-sans-serif;
+
+
+/*-- scss:rules --*/
+
+// Rule to apply the monospace font to code blocks
+code, pre {
+  font-family: $font-family-monospace;
+}

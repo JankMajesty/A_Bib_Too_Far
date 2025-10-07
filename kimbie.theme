@@ -1,0 +1,16 @@
+{
+  "text-color": "#d3af86",
+  "background-color": "#282016",
+  "line-number-color": "#a57a46",
+  "keyword": "#dc3958",
+  "attribute": "#8acc70",
+  "function": "#8acc70",
+  "string": "#f06431",
+  "variable": "#dc3958",
+  "type": "#55b5db",
+  "constant": "#f06431",
+  "comment": "#a57a46",
+  "number": "#f06431",
+  "preprocessor": "#55b5db",
+  "error": "#dc3958"
+}
